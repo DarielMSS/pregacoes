@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pregações - Dariel Sobzak</title>
+<meta name="description" content="E-book de pregações: mensagens para ler online ou baixar em PDF.">
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#0f172a;
+    color:white;
+    margin:0;
+    padding:40px 16px;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:8px;
+}
+
+.subtitulo{
+    text-align:center;
+    color:#cbd5e1;
+    margin-top:0;
+}
+
+.versiculo{
+    text-align:center;
+    font-style:italic;
+    color:#94a3b8;
+    max-width:600px;
+    margin:24px auto;
+    line-height:1.5;
+}
+
+.busca{
+    width:100%;
+    box-sizing:border-box;
+    padding:12px 14px;
+    border-radius:8px;
+    border:1px solid #334155;
+    background:#1e293b;
+    color:white;
+    font-size:16px;
+}
+
+.card{
+    background:#1e293b;
+    padding:20px;
+    border-radius:12px;
+    margin:15px 0;
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:scale(1.02);
+}
+
+.card h2{
+    margin:0 0 8px;
+}
+
+.referencia{
+    color:#38bdf8;
+    margin:0 0 8px;
+}
+
+.resumo{
+    color:#cbd5e1;
+    line-height:1.5;
+}
+
+.data{
+    color:#94a3b8;
+    font-size:14px;
+}
+
+.links a{
+    margin-right:16px;
+}
+
+.vazio{
+    text-align:center;
+    color:#94a3b8;
+}
+
+a{
+    color:#38bdf8;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+footer{
+    text-align:center;
+    color:#64748b;
+    margin-top:40px;
+    font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>📖 Pregações</h1>
+<p class="subtitulo">Dariel Sobzak</p>
+
+<p class="versiculo">“Pregue a palavra, esteja preparado a tempo e fora de tempo.” — 2 Timóteo 4:2</p>
+
+<input class="busca" id="busca" type="search" placeholder="Buscar por título, texto bíblico ou tema...">
+
+<div id="lista"></div>
+<p class="vazio" id="vazio" hidden>Nenhuma pregação encontrada.</p>
+
+<footer>Feito com fé · Publicado no GitHub Pages</footer>
+
+</div>
+
+<script>
+// Para adicionar uma pregação: copie um bloco { ... }, troque os dados
+// e coloque o PDF na pasta "pdf" com o mesmo nome informado em "arquivo".
+const pregacoes = [
+    {
+        titulo: "O Paralítico de Betesda — É Hora de Levantar e Andar",
+        referencia: "João 5:6-7 · Sermão Narrativo",
+        data: "2026-09-01",
+        resumo: "Deixar o passado e a paralisia espiritual para responder, em obediência, ao chamado de Jesus.",
+        arquivo: "pdf/o-paralitico-de-betesda.pdf"
+    },
+    {
+        titulo: "Pare de Lutar com Suas Próprias Forças",
+        referencia: "2 Crônicas 20:17 · Sermão Textual",
+        data: "2026-08-28",
+        resumo: "Deixar de lutar sozinho e entregar a batalha da vida nas mãos de Deus.",
+        arquivo: "pdf/pare-de-lutar-com-suas-proprias-forcas.pdf"
+    },
+    {
+        titulo: "Onde Está a Sua Direção?",
+        referencia: "Levítico 26:12-13 · Sermão Expositivo",
+        data: "2026-08-27",
+        resumo: "A verdadeira direção nasce da presença, identidade, libertação e dignidade que só Deus dá.",
+        arquivo: "pdf/onde-esta-a-sua-direcao.pdf"
+    }
+];
+
+const lista = document.getElementById("lista");
+const vazio = document.getElementById("vazio");
+const busca = document.getElementById("busca");
+
+function formatarData(iso){
+    const [ano, mes, dia] = iso.split("-");
+    return `${dia}/${mes}/${ano}`;
+}
+
+function semAcento(texto){
+    return texto.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+}
+
+function renderizar(filtro){
+    const termo = semAcento(filtro || "");
+    const itens = pregacoes
+        .slice()
+        .sort((a, b) => b.data.localeCompare(a.data))
+        .filter(p => semAcento(p.titulo + " " + p.referencia + " " + p.resumo).includes(termo));
+
+    lista.replaceChildren(...itens.map(p => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+            <h2></h2>
+            <p class="referencia"></p>
+            <p class="resumo"></p>
+            <p class="data"></p>
+            <div class="links">
+                <a target="_blank">Ler pregação</a>
+                <a download>Baixar PDF</a>
+            </div>`;
+        card.querySelector("h2").textContent = p.titulo;
+        card.querySelector(".referencia").textContent = p.referencia;
+        card.querySelector(".resumo").textContent = p.resumo;
+        card.querySelector(".data").textContent = formatarData(p.data);
+        card.querySelectorAll(".links a").forEach(a => a.href = p.arquivo);
+        return card;
+    }));
+
+    vazio.hidden = itens.length > 0;
+}
+
+busca.addEventListener("input", e => renderizar(e.target.value));
+renderizar();
+</script>
+
+</body>
+</html>
